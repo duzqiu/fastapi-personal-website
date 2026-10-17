@@ -1,0 +1,1398 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light"><head>
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7fc">
+    <meta name="description" content="个人网站 · 介绍、项目与联系方式">
+    <title>首页 · 个人网站</title>
+  <style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/components/AuroraBackground.vue?vue&amp;type=style&amp;index=0&amp;scoped=22410d4b&amp;lang.css">
+.aurora[data-v-22410d4b] {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: -1;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+.aurora__blob[data-v-22410d4b] {
+
+  position: absolute;
+
+  width: 52vw;
+
+  height: 52vw;
+
+  border-radius: 50%;
+
+  filter: blur(90px);
+
+  opacity: var(--aurora-opacity);
+
+  animation: drift 22s ease-in-out infinite;
+
+  will-change: transform;
+}
+.aurora__blob--indigo[data-v-22410d4b] {
+
+  top: -18vw;
+
+  left: -10vw;
+
+  background: radial-gradient(circle, #4f46e5 0%, transparent 68%);
+}
+.aurora__blob--cyan[data-v-22410d4b] {
+
+  top: -6vw;
+
+  right: -12vw;
+
+  background: radial-gradient(circle, #06b6d4 0%, transparent 68%);
+
+  animation-duration: 26s;
+
+  animation-delay: -6s;
+}
+.aurora__blob--pink[data-v-22410d4b] {
+
+  bottom: -26vw;
+
+  left: 26vw;
+
+  background: radial-gradient(circle, #ec4899 0%, transparent 70%);
+
+  animation-duration: 30s;
+
+  animation-delay: -14s;
+
+  opacity: calc(var(--aurora-opacity) * 0.7);
+}
+
+
+
+/* 极细网格：给「科技感」一点结构，深色下更明显 */
+.aurora__grid[data-v-22410d4b] {
+
+  position: absolute;
+
+  inset: 0;
+
+  background-image: linear-gradient(
+
+      to right,
+
+      var(--border) 1px,
+
+      transparent 1px
+
+    ),
+
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+
+  background-size: 72px 72px;
+
+  mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 78%);
+
+  -webkit-mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 78%);
+
+  opacity: 0.7;
+}
+
+
+
+/* 噪点：内联 SVG，省一个图片请求 */
+.aurora__noise[data-v-22410d4b] {
+
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.35;
+
+  mix-blend-mode: overlay;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+</style><style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/components/ThemeToggle.vue?vue&amp;type=style&amp;index=0&amp;scoped=fe097fd2&amp;lang.css">
+.toggle[data-v-fe097fd2] {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 40px;
+
+  height: 40px;
+
+  padding: 0;
+
+  border: 1px solid var(--border);
+
+  border-radius: 50%;
+
+  background: var(--surface);
+
+  color: var(--text-2);
+
+  cursor: pointer;
+
+  backdrop-filter: blur(10px);
+
+  transition: all 0.25s ease;
+}
+.toggle[data-v-fe097fd2]:hover {
+
+  color: var(--brand);
+
+  border-color: var(--brand);
+
+  transform: rotate(-12deg);
+}
+.toggle__icon[data-v-fe097fd2] {
+
+  display: inline-flex;
+
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.toggle__icon.is-dark[data-v-fe097fd2] {
+
+  transform: rotate(-18deg);
+}
+
+</style><style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/components/ProjectCard.vue?vue&amp;type=style&amp;index=0&amp;scoped=31773649&amp;lang.css">
+.project[data-v-31773649] {
+
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 24px;
+
+  /* Bento：默认占 3 格（6 格里的半行），featured 占 4 格 */
+
+  grid-column: span 3;
+
+  min-height: 200px;
+}
+.project--featured[data-v-31773649] {
+
+  grid-column: span 4;
+
+  min-height: 240px;
+
+  background: var(--grad-soft);
+}
+
+
+
+/* 4 + 2、3 + 3 这样凑满一行，Bento 才不会在旁边空出一块 */
+.project--narrow[data-v-31773649] {
+
+  grid-column: span 2;
+}
+.project__top[data-v-31773649] {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  font-size: 12px;
+
+  color: var(--text-3);
+
+  letter-spacing: 0.08em;
+}
+.project__index[data-v-31773649] {
+
+  font-weight: 700;
+}
+.project__name[data-v-31773649] {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 16px;
+
+  font-size: 19px;
+}
+.project__arrow[data-v-31773649] {
+
+  color: var(--text-3);
+
+  transform: translate(-2px, 2px);
+
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+.project:hover .project__arrow[data-v-31773649] {
+
+  color: var(--brand);
+
+  transform: translate(0, 0);
+}
+.project__desc[data-v-31773649] {
+
+  margin-top: 10px;
+
+  font-size: 14px;
+}
+.project__tags[data-v-31773649] {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: auto;
+
+  padding-top: 18px;
+}
+.project__tag[data-v-31773649] {
+
+  padding: 3px 11px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  color: var(--text-3);
+}
+@media (max-width: 900px) {
+.project[data-v-31773649],
+
+  .project--featured[data-v-31773649],
+
+  .project--narrow[data-v-31773649] {
+
+    grid-column: span 4;
+}
+}
+@media (max-width: 640px) {
+.project[data-v-31773649],
+
+  .project--featured[data-v-31773649],
+
+  .project--narrow[data-v-31773649] {
+
+    grid-column: span 1;
+
+    min-height: auto;
+}
+}
+
+</style><style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/components/SectionHeading.vue?vue&amp;type=style&amp;index=0&amp;scoped=d04c9cb4&amp;lang.css">
+.heading[data-v-d04c9cb4] {
+
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 22px;
+}
+.heading__title[data-v-d04c9cb4] {
+
+  margin-top: 10px;
+
+  font-size: clamp(22px, 3.2vw, 30px);
+}
+.heading__desc[data-v-d04c9cb4] {
+
+  margin-top: 10px;
+
+  max-width: 620px;
+
+  font-size: 14.5px;
+}
+.heading__actions[data-v-d04c9cb4] {
+
+  flex: none;
+}
+@media (max-width: 640px) {
+.heading[data-v-d04c9cb4] {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 12px;
+}
+}
+
+</style><style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/views/HomeView.vue?vue&amp;type=style&amp;index=0&amp;scoped=b4e148ca&amp;lang.css">
+.home[data-v-b4e148ca] {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 64px;
+}
+
+
+
+/* ---------- 首屏 ---------- */
+.hero[data-v-b4e148ca] {
+
+  align-items: stretch;
+}
+.hero__main[data-v-b4e148ca] {
+
+  grid-column: span 4;
+
+  padding: 44px 40px;
+
+  border-radius: var(--radius-lg);
+
+  background: var(--surface);
+}
+.hero__status[data-v-b4e148ca] {
+
+  border-color: transparent;
+
+  background: var(--brand-soft);
+
+  color: var(--brand);
+}
+.hero__pulse[data-v-b4e148ca] {
+
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+
+  box-shadow: 0 0 0 0 currentColor;
+
+  animation: pulse-b4e148ca 2.2s ease-out infinite;
+}
+@keyframes pulse-b4e148ca {
+0% {
+
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.45);
+}
+70% {
+
+    box-shadow: 0 0 0 9px rgba(79, 70, 229, 0);
+}
+100% {
+
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+}
+}
+.hero__title[data-v-b4e148ca] {
+
+  margin-top: 22px;
+
+  font-size: clamp(30px, 5.2vw, 52px);
+
+  letter-spacing: -0.02em;
+}
+.hero__role[data-v-b4e148ca] {
+
+  margin-top: 12px;
+
+  color: var(--text-2);
+
+  font-size: 17px;
+
+  font-weight: 600;
+}
+.hero__intro[data-v-b4e148ca] {
+
+  margin-top: 16px;
+
+  max-width: 560px;
+}
+.hero__actions[data-v-b4e148ca] {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  margin-top: 30px;
+}
+.hero__meta[data-v-b4e148ca] {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 18px;
+
+  margin-top: 28px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid var(--border);
+
+  color: var(--text-3);
+
+  font-size: 13px;
+}
+.hero__side[data-v-b4e148ca] {
+
+  grid-column: span 2;
+
+  display: flex;
+
+  flex-direction: column;
+
+  /* 竖着居中：卡片被拉得和左卡一样高时，内容不会一头扎在顶上、底下空一大截 */
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 36px 24px;
+
+  border-radius: var(--radius-lg);
+
+  text-align: center;
+
+  background: var(--grad-soft);
+}
+.hero__avatar[data-v-b4e148ca] {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 96px;
+
+  height: 96px;
+
+  border-radius: 30px;
+
+  background: var(--grad);
+
+  color: #fff;
+
+  font-size: 30px;
+
+  font-weight: 700;
+
+  box-shadow: 0 26px 50px -22px rgba(79, 70, 229, 0.95);
+
+  animation: float 6s ease-in-out infinite;
+}
+.hero__sideName[data-v-b4e148ca] {
+
+  margin-top: 18px;
+
+  font-weight: 700;
+}
+.hero__sideTip[data-v-b4e148ca] {
+
+  margin-top: 4px;
+
+  font-size: 12.5px;
+}
+.stats[data-v-b4e148ca] {
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 10px;
+
+  width: 100%;
+
+  margin: 24px 0 0;
+
+  padding-top: 20px;
+
+  border-top: 1px solid var(--border);
+}
+.stats__value[data-v-b4e148ca] {
+
+  font-size: 19px;
+
+  font-weight: 700;
+}
+.stats__label[data-v-b4e148ca] {
+
+  margin: 2px 0 0;
+
+  color: var(--text-3);
+
+  font-size: 12px;
+}
+
+
+
+/* ---------- 跑马灯 ---------- */
+.marquee[data-v-b4e148ca] {
+
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 6px 0;
+
+  mask-image: linear-gradient(
+
+    to right,
+
+    transparent,
+
+    #000 12%,
+
+    #000 88%,
+
+    transparent
+
+  );
+
+  -webkit-mask-image: linear-gradient(
+
+    to right,
+
+    transparent,
+
+    #000 12%,
+
+    #000 88%,
+
+    transparent
+
+  );
+}
+.marquee__track[data-v-b4e148ca] {
+
+  display: flex;
+
+  gap: 12px;
+
+  width: max-content;
+
+  animation: marquee 26s linear infinite;
+}
+.marquee:hover .marquee__track[data-v-b4e148ca] {
+
+  animation-play-state: paused;
+}
+
+
+
+/* ---------- 区块 ---------- */
+.section[data-v-b4e148ca] {
+
+  display: block;
+}
+.cta[data-v-b4e148ca] {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 36px 40px;
+
+  border-radius: var(--radius-lg);
+
+  background: var(--grad-soft);
+}
+.cta__title[data-v-b4e148ca] {
+
+  font-size: clamp(20px, 3vw, 26px);
+}
+.cta__text p[data-v-b4e148ca] {
+
+  margin-top: 10px;
+
+  font-size: 14.5px;
+}
+.cta__actions[data-v-b4e148ca] {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+@media (max-width: 900px) {
+.hero__main[data-v-b4e148ca],
+
+  .hero__side[data-v-b4e148ca] {
+
+    grid-column: span 4;
+}
+}
+@media (max-width: 640px) {
+.home[data-v-b4e148ca] {
+
+    gap: 44px;
+}
+.hero__main[data-v-b4e148ca],
+
+  .hero__side[data-v-b4e148ca] {
+
+    grid-column: span 1;
+
+    padding: 28px 22px;
+}
+.hero__avatar[data-v-b4e148ca] {
+
+    width: 76px;
+
+    height: 76px;
+
+    border-radius: 24px;
+
+    font-size: 24px;
+}
+.cta[data-v-b4e148ca] {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding: 26px 22px;
+}
+}
+
+</style><style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/layouts/DefaultLayout.vue?vue&amp;type=style&amp;index=0&amp;scoped=75d0be1e&amp;lang.css">
+.layout[data-v-75d0be1e] {
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-height: 100vh;
+}
+
+
+
+/* ---------- 顶栏：玻璃 + 吸顶 ---------- */
+.header[data-v-75d0be1e] {
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 20;
+
+  border-bottom: 1px solid var(--border);
+
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+
+  backdrop-filter: blur(18px) saturate(160%);
+
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+.header__progress[data-v-75d0be1e] {
+
+  position: absolute;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: -1px;
+
+  height: 2px;
+
+  background: var(--grad);
+
+  transform-origin: left center;
+
+  transform: scaleX(0);
+}
+.header__bar[data-v-75d0be1e] {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  height: var(--header-height);
+}
+.brand[data-v-75d0be1e] {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  font-weight: 700;
+}
+.brand__mark[data-v-75d0be1e] {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 36px;
+
+  height: 36px;
+
+  border-radius: 12px;
+
+  background: var(--grad);
+
+  color: #fff;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.02em;
+
+  box-shadow: 0 10px 22px -12px rgba(79, 70, 229, 0.95);
+}
+.brand__mark--sm[data-v-75d0be1e] {
+
+  width: 32px;
+
+  height: 32px;
+
+  border-radius: 10px;
+
+  font-size: 12px;
+}
+.brand__name[data-v-75d0be1e] {
+
+  font-size: 16px;
+}
+.nav[data-v-75d0be1e] {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  padding: 4px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 999px;
+
+  background: var(--surface);
+
+  backdrop-filter: blur(10px);
+}
+.nav__link[data-v-75d0be1e] {
+
+  padding: 6px 16px;
+
+  border-radius: 999px;
+
+  color: var(--text-2);
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  transition: all 0.22s ease;
+}
+.nav__link[data-v-75d0be1e]:hover {
+
+  color: var(--text-1);
+}
+.nav__link.router-link-active[data-v-75d0be1e] {
+
+  background: var(--grad);
+
+  color: #fff;
+
+  box-shadow: 0 10px 20px -14px rgba(79, 70, 229, 0.95);
+}
+.header__actions[data-v-75d0be1e] {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+.layout__main[data-v-75d0be1e] {
+
+  flex: 1;
+
+  padding: 34px 0 60px;
+}
+
+
+
+/* ---------- 页脚 ---------- */
+.footer[data-v-75d0be1e] {
+
+  border-top: 1px solid var(--border);
+
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+
+  backdrop-filter: blur(14px);
+}
+.footer__inner[data-v-75d0be1e] {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding-top: 26px;
+
+  padding-bottom: 26px;
+}
+.footer__brand[data-v-75d0be1e] {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+.footer__name[data-v-75d0be1e] {
+
+  font-weight: 600;
+}
+.footer__tip[data-v-75d0be1e],
+
+.footer__copy[data-v-75d0be1e] {
+
+  color: var(--text-3);
+
+  font-size: 12.5px;
+}
+.footer__links[data-v-75d0be1e] {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  font-size: 13.5px;
+
+  color: var(--text-2);
+}
+.footer__links a[data-v-75d0be1e]:hover {
+
+  color: var(--brand);
+}
+.footer__meta[data-v-75d0be1e] {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 4px;
+}
+.status[data-v-75d0be1e] {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: var(--text-3);
+
+  font-size: 12.5px;
+}
+.status__dot[data-v-75d0be1e] {
+
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--border-strong);
+}
+.status.is-online .status__dot[data-v-75d0be1e] {
+
+  background: #22c55e;
+
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+
+
+
+/* 路由切换 */
+.page-enter-active[data-v-75d0be1e],
+
+.page-leave-active[data-v-75d0be1e] {
+
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.page-enter-from[data-v-75d0be1e] {
+
+  opacity: 0;
+
+  transform: translateY(10px);
+}
+.page-leave-to[data-v-75d0be1e] {
+
+  opacity: 0;
+}
+@media (max-width: 780px) {
+.header__cta[data-v-75d0be1e] {
+
+    display: none;
+}
+.brand__name[data-v-75d0be1e] {
+
+    display: none;
+}
+.footer__inner[data-v-75d0be1e] {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 18px;
+}
+.footer__meta[data-v-75d0be1e] {
+
+    align-items: flex-start;
+}
+}
+
+</style><style type="text/css" data-vite-dev-id="D:/code/fastapi-personal-website/src/styles/index.scss">@charset "UTF-8";
+/**
+ * 全站样式：设计变量 + 通用零件 + 动效。
+ *
+ * 配色走「极光渐变」（靛蓝 → 青 → 品红），深浅两套主题都只改这里的变量
+ * （`data-theme="dark"` 挂在 <html> 上，见 composables/useTheme.js）。
+ * 页面里只引用变量、不写死颜色，换主题才不会有漏网的。
+ */
+:root {
+  /* 底色 / 表面（玻璃拟态用半透明 surface + 模糊，见 .card） */
+  --bg: #f6f7fc;
+  --bg-2: #e9edf9;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-solid: #ffffff;
+  --surface-hover: rgba(255, 255, 255, 0.9);
+  --border: rgba(19, 27, 58, 0.08);
+  --border-strong: rgba(19, 27, 58, 0.16);
+  /* 文字三级 */
+  --text-1: #0f1425;
+  --text-2: #4e5773;
+  --text-3: #8c95ab;
+  /* 品牌色与渐变 */
+  --brand: #4f46e5;
+  --brand-2: #06b6d4;
+  --brand-3: #ec4899;
+  --brand-soft: rgba(79, 70, 229, 0.1);
+  --grad: linear-gradient(115deg, #4f46e5 0%, #06b6d4 52%, #ec4899 100%);
+  --grad-soft: linear-gradient(
+    115deg,
+    rgba(79, 70, 229, 0.14),
+    rgba(6, 182, 212, 0.14) 52%,
+    rgba(236, 72, 153, 0.14)
+  );
+  /* 圆角 / 阴影 / 版心 */
+  --radius-sm: 12px;
+  --radius: 18px;
+  --radius-lg: 26px;
+  --shadow-sm: 0 6px 18px -8px rgba(15, 20, 37, 0.18);
+  --shadow: 0 20px 45px -24px rgba(15, 20, 37, 0.28);
+  --shadow-lg: 0 40px 80px -32px rgba(15, 20, 37, 0.35);
+  --content-width: 1120px;
+  --header-height: 66px;
+  /* 极光背景的透明度：深色下要更亮一点才看得见 */
+  --aurora-opacity: 0.75;
+  color-scheme: light;
+}
+
+[data-theme=dark] {
+  --bg: #070a16;
+  --bg-2: #0d1330;
+  --surface: rgba(255, 255, 255, 0.055);
+  --surface-solid: #121a33;
+  --surface-hover: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --text-1: #f2f5ff;
+  --text-2: #a8b2cc;
+  --text-3: #717c9b;
+  --brand: #818cf8;
+  --brand-2: #22d3ee;
+  --brand-3: #f472b6;
+  --brand-soft: rgba(129, 140, 248, 0.16);
+  --shadow-sm: 0 6px 18px -8px rgba(0, 0, 0, 0.6);
+  --shadow: 0 20px 45px -24px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 40px 80px -32px rgba(0, 0, 0, 0.8);
+  --aurora-opacity: 0.5;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Helvetica Neue", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* 主题切换时整页过渡一下，别硬闪 */
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--brand-soft);
+}
+
+/* 滚动条：细一点，跟着主题走 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+/* ---------- 版心与栅格 ---------- */
+.container {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Bento 网格：尺寸不一的圆角卡片有序排布（可变宽度，卡片自己用 --span 占位） */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+}
+
+/* ---------- 通用零件 ---------- */
+/* 玻璃卡片：半透明 + 背景模糊 + 柔和描边 */
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+}
+
+.card--hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+  background: var(--surface-hover);
+}
+
+/* 渐变描边（悬停时亮起）：用两层背景做「内填色 + 外描边」 */
+.card--glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--grad);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.card--glow:hover::before {
+  opacity: 1;
+}
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background: var(--grad);
+  background-size: 180% 180%;
+  color: #fff;
+  box-shadow: 0 14px 30px -14px rgba(79, 70, 229, 0.9);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 20px 40px -14px rgba(79, 70, 229, 0.95);
+  background-position: 100% 50%;
+}
+
+.btn--ghost {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text-1);
+  backdrop-filter: blur(10px);
+}
+
+.btn--ghost:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* 小标签 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.chip:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  transform: translateY(-1px);
+}
+
+/* 渐变文字 */
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 小标题上方那行「眉标」 */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--grad);
+}
+
+/* 正文段落 */
+.muted {
+  color: var(--text-2);
+}
+
+/* ---------- 动效 ---------- */
+/* 滚动进场：useReveal 加上 .is-visible（见 composables/useReveal.js） */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(4%, -6%, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-5%, 4%, 0) scale(0.96);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+/* 无障碍：系统开了「减少动态效果」就全关掉 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* ---------- 响应式 ---------- */
+@media (max-width: 900px) {
+  .bento {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+  .container {
+    padding: 0 18px;
+  }
+  .bento {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .btn {
+    height: 44px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+}</style></head>
+  <body>
+    <div id="app" data-v-app=""><!-- 全站背景：几团缓慢飘动的极光 + 一层网格 + 一点噪点，纯装饰、不接收点击 --><div data-v-22410d4b="" data-v-75d0be1e="" class="aurora" aria-hidden="true"><span class="aurora__blob aurora__blob--indigo" data-v-22410d4b=""></span><span class="aurora__blob aurora__blob--cyan" data-v-22410d4b=""></span><span class="aurora__blob aurora__blob--pink" data-v-22410d4b=""></span><span class="aurora__grid" data-v-22410d4b=""></span><span class="aurora__noise" data-v-22410d4b=""></span></div><div data-v-75d0be1e="" class="layout"><header data-v-75d0be1e="" class="header"><!-- 顶部细进度条：随滚动走，纯装饰但很「活」 --><span data-v-75d0be1e="" class="header__progress" style="transform: scaleX(0);"></span><div data-v-75d0be1e="" class="container header__bar"><a data-v-75d0be1e="" href="/" class="router-link-active router-link-exact-active brand" aria-current="page"><span data-v-75d0be1e="" class="brand__mark">YN</span><span data-v-75d0be1e="" class="brand__name">个人网站</span></a><nav data-v-75d0be1e="" class="nav"><a data-v-75d0be1e="" href="/" class="router-link-active router-link-exact-active nav__link" aria-current="page">首页</a><a data-v-75d0be1e="" href="/about" class="nav__link">关于我</a></nav><div data-v-75d0be1e="" class="header__actions"><button data-v-fe097fd2="" data-v-75d0be1e="" class="toggle" type="button" aria-label="切换到深色主题" title="切换到深色主题"><span data-v-fe097fd2="" class="toggle__icon"><!-- 太阳 / 月亮，手写 SVG，省一个图标库 --><svg data-v-fe097fd2="" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle data-v-fe097fd2="" cx="12" cy="12" r="4.6" fill="none" stroke="currentColor" stroke-width="1.7"></circle><g data-v-fe097fd2="" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path data-v-fe097fd2="" d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2"></path><path data-v-fe097fd2="" d="M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"></path></g></svg></span></button><a data-v-75d0be1e="" class="btn btn--primary header__cta" href="mailto:you@example.com"> 联系我 </a></div></div></header><main data-v-75d0be1e="" class="layout__main"><!-- ⚠️ 显式给 duration：不给的话 Vue 靠 transitionend 收尾，一旦那个事件没来
+
+             （无头截图、标签页不可见之类），`page-enter-from` 会一直挂在根元素上、
+
+             整页停在 opacity: 0，看着就像「白屏」。给个固定时长就有兜底了。 --><div data-v-b4e148ca="" data-v-75d0be1e="" class="container home"><!-- 首屏：左侧文字 + 右侧玻璃资料卡，Bento 那种「大小卡片拼在一起」的感觉 --><section data-v-b4e148ca="" class="hero bento"><div data-v-b4e148ca="" class="hero__main card reveal is-visible"><span data-v-b4e148ca="" class="chip hero__status"><i data-v-b4e148ca="" class="hero__pulse"></i> 正在寻找新的机会</span><h1 data-v-b4e148ca="" class="hero__title"> 你好，我是 <span data-v-b4e148ca="" class="grad-text">你的名字</span></h1><p data-v-b4e148ca="" class="hero__role">全栈开发 · FastAPI × Vue 3</p><p data-v-b4e148ca="" class="hero__intro muted">做后端也写前端：用 FastAPI 把接口和数据捋顺，用 Vue 3 把界面做舒服。喜欢把想法尽快变成能点开、能用起来的东西，也喜欢把细节抠到像素级。</p><div data-v-b4e148ca="" class="hero__actions"><a data-v-b4e148ca="" class="btn btn--primary" href="mailto:you@example.com"> 找我聊聊 <svg data-v-b4e148ca="" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path data-v-b4e148ca="" d="M5 12h13M12 5.5 18.5 12 12 18.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg></a><a data-v-b4e148ca="" href="/about" class="btn btn--ghost"> 了解我的经历 </a></div><ul data-v-b4e148ca="" class="hero__meta"><li data-v-b4e148ca="">中国 · 上海</li><li data-v-b4e148ca="">you@example.com</li></ul></div><aside data-v-b4e148ca="" class="hero__side card reveal is-visible" style="--reveal-delay: 120ms;"><div data-v-b4e148ca="" class="hero__avatar"><span data-v-b4e148ca="">YN</span></div><p data-v-b4e148ca="" class="hero__sideName">你的名字</p><p data-v-b4e148ca="" class="hero__sideTip muted">全栈开发 · FastAPI × Vue 3</p><dl data-v-b4e148ca="" class="stats"><div data-v-b4e148ca="" class="stats__item"><dt data-v-b4e148ca="" class="stats__value grad-text">5+ 年</dt><dd data-v-b4e148ca="" class="stats__label">开发经验</dd></div><div data-v-b4e148ca="" class="stats__item"><dt data-v-b4e148ca="" class="stats__value grad-text">20+ 个</dt><dd data-v-b4e148ca="" class="stats__label">项目</dd></div><div data-v-b4e148ca="" class="stats__item"><dt data-v-b4e148ca="" class="stats__value grad-text">12 项</dt><dd data-v-b4e148ca="" class="stats__label">技术栈</dd></div></dl></aside></section><!-- 技术栈：一条无限滚动的跑马灯（内容复制一份，位移 50% 就能无缝衔接） --><section data-v-b4e148ca="" class="marquee reveal"><div data-v-b4e148ca="" class="marquee__track"><span data-v-b4e148ca="" class="chip">Python</span><span data-v-b4e148ca="" class="chip">FastAPI</span><span data-v-b4e148ca="" class="chip">Vue 3</span><span data-v-b4e148ca="" class="chip">TypeScript</span><span data-v-b4e148ca="" class="chip">MySQL</span><span data-v-b4e148ca="" class="chip">Redis</span><span data-v-b4e148ca="" class="chip">Docker</span><span data-v-b4e148ca="" class="chip">Nginx</span><span data-v-b4e148ca="" class="chip">Git</span><span data-v-b4e148ca="" class="chip">Python</span><span data-v-b4e148ca="" class="chip">FastAPI</span><span data-v-b4e148ca="" class="chip">Vue 3</span><span data-v-b4e148ca="" class="chip">TypeScript</span><span data-v-b4e148ca="" class="chip">MySQL</span><span data-v-b4e148ca="" class="chip">Redis</span><span data-v-b4e148ca="" class="chip">Docker</span><span data-v-b4e148ca="" class="chip">Nginx</span><span data-v-b4e148ca="" class="chip">Git</span></div></section><!-- 项目：Bento 网格，第一个占得更宽 --><section data-v-b4e148ca="" class="section"><header data-v-d04c9cb4="" data-v-b4e148ca="" class="heading"><div data-v-d04c9cb4="" class="heading__main"><span data-v-d04c9cb4="" class="eyebrow">Selected work</span><h2 data-v-d04c9cb4="" class="heading__title">做过的一些东西</h2><p data-v-d04c9cb4="" class="heading__desc muted">挑几个能说明问题的：从接口设计到界面落地，基本都是自己走完全程。</p></div><!--v-if--></header><div data-v-b4e148ca="" class="bento"><div data-v-31773649="" data-v-b4e148ca="" class="project card card--hover card--glow project--featured reveal"><div data-v-31773649="" class="project__top"><span data-v-31773649="" class="project__index">01</span><span data-v-31773649="" class="project__period">2026</span></div><h3 data-v-31773649="" class="project__name">个人网站 <svg data-v-31773649="" class="project__arrow" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path data-v-31773649="" d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></h3><p data-v-31773649="" class="project__desc muted">就是你现在看的这个：Vue 3 + Vite 做的前台，极光渐变与玻璃拟态的风格，内容走 FastAPI 接口，拿不到接口时自动退回本地数据。</p><ul data-v-31773649="" class="project__tags"><li data-v-31773649="" class="project__tag">Vue 3</li><li data-v-31773649="" class="project__tag">Vite</li><li data-v-31773649="" class="project__tag">FastAPI</li><li data-v-31773649="" class="project__tag">SCSS</li></ul></div><div data-v-31773649="" data-v-b4e148ca="" class="project card card--hover card--glow project--narrow reveal" style="--reveal-delay: 80ms;"><div data-v-31773649="" class="project__top"><span data-v-31773649="" class="project__index">02</span><span data-v-31773649="" class="project__period">2025</span></div><h3 data-v-31773649="" class="project__name">内容管理后台 <svg data-v-31773649="" class="project__arrow" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path data-v-31773649="" d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></h3><p data-v-31773649="" class="project__desc muted">权限、菜单、表格与表单全套，按角色控制可见范围。</p><ul data-v-31773649="" class="project__tags"><li data-v-31773649="" class="project__tag">Vue 3</li><li data-v-31773649="" class="project__tag">Element Plus</li><li data-v-31773649="" class="project__tag">RBAC</li></ul></div><div data-v-31773649="" data-v-b4e148ca="" class="project card card--hover card--glow reveal" style="--reveal-delay: 160ms;"><div data-v-31773649="" class="project__top"><span data-v-31773649="" class="project__index">03</span><span data-v-31773649="" class="project__period">2025</span></div><h3 data-v-31773649="" class="project__name">数据接口服务 <svg data-v-31773649="" class="project__arrow" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path data-v-31773649="" d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></h3><p data-v-31773649="" class="project__desc muted">统一鉴权与限流的 API 服务，带自动生成的接口文档。</p><ul data-v-31773649="" class="project__tags"><li data-v-31773649="" class="project__tag">FastAPI</li><li data-v-31773649="" class="project__tag">JWT</li><li data-v-31773649="" class="project__tag">MySQL</li></ul></div><div data-v-31773649="" data-v-b4e148ca="" class="project card card--hover card--glow reveal" style="--reveal-delay: 240ms;"><div data-v-31773649="" class="project__top"><span data-v-31773649="" class="project__index">04</span><span data-v-31773649="" class="project__period">2024</span></div><h3 data-v-31773649="" class="project__name">微信小程序 <svg data-v-31773649="" class="project__arrow" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path data-v-31773649="" d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></h3><p data-v-31773649="" class="project__desc muted">和后台同一套接口的小程序端，登录、列表、详情一条龙。</p><ul data-v-31773649="" class="project__tags"><li data-v-31773649="" class="project__tag">小程序</li><li data-v-31773649="" class="project__tag">REST</li></ul></div></div></section><!-- 结尾行动号召 --><section data-v-b4e148ca="" class="cta card reveal"><div data-v-b4e148ca="" class="cta__text"><h2 data-v-b4e148ca="" class="cta__title">有想法，或者只是想说说话？</h2><p data-v-b4e148ca="" class="muted"> 无论是合作、面试还是技术闲聊，邮件我都会看，通常一天内回。 </p></div><div data-v-b4e148ca="" class="cta__actions"><a data-v-b4e148ca="" class="btn btn--primary" href="mailto:you@example.com"> 写封邮件 </a><a data-v-b4e148ca="" class="btn btn--ghost" href="https://github.com/your-name" target="_blank" rel="noreferrer"> GitHub </a></div></section></div></main><footer data-v-75d0be1e="" class="footer"><div data-v-75d0be1e="" class="container footer__inner"><div data-v-75d0be1e="" class="footer__brand"><span data-v-75d0be1e="" class="brand__mark brand__mark--sm">YN</span><div data-v-75d0be1e=""><p data-v-75d0be1e="" class="footer__name">你的名字</p><p data-v-75d0be1e="" class="footer__tip">用 Vue 3 + Vite 构建 · FastAPI 提供内容</p></div></div><nav data-v-75d0be1e="" class="footer__links"><a data-v-75d0be1e="" href="/" class="router-link-active router-link-exact-active" aria-current="page">首页</a><a data-v-75d0be1e="" href="/about" class="">关于我</a><a data-v-75d0be1e="" href="mailto:you@example.com">邮件</a><a data-v-75d0be1e="" href="https://github.com/your-name" target="_blank" rel="noreferrer">GitHub</a></nav><div data-v-75d0be1e="" class="footer__meta"><!-- 后端通了会变成绿色那档；没通只是提示，不影响浏览 --><span data-v-75d0be1e="" class="status is-online"><i data-v-75d0be1e="" class="status__dot"></i> 接口已连接</span><span data-v-75d0be1e="" class="footer__copy">© 2026 你的名字</span></div></div></footer></div></div>
+    <script type="module" src="/src/main.js?t=1792154722421"></script>
+    <script>
+      // 临时诊断：把超出视口的元素写进 DOM，方便用 --dump-dom 查横向溢出
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const vw = document.documentElement.clientWidth
+          const bad = []
+          document.querySelectorAll('body *').forEach((el) => {
+            const r = el.getBoundingClientRect()
+            if (r.width > vw + 1 || r.right > vw + 1 || r.left < -1) {
+              bad.push(
+                `${el.tagName}${el.className ? '.' + String(el.className).split(' ')[0] : ''} w=${Math.round(r.width)} L=${Math.round(r.left)} R=${Math.round(r.right)}`,
+              )
+            }
+          })
+          const div = document.createElement('div')
+          div.id = 'overflow-report'
+          div.textContent = `VW=${vw} DOCH=${document.documentElement.scrollWidth} DOWN=${document.documentElement.clientWidth} || ` + bad.slice(0, 16).join(' ;; ')
+          document.body.appendChild(div)
+        }, 2500)
+      })
+    </script>
+  
+
+<div id="overflow-report">VW=482 DOCH=482 DOWN=482 || SPAN.aurora__blob w=256 L=-49 R=207 ;; SPAN.aurora__blob w=272 L=285 R=558 ;; DIV.marquee__track w=1439 L=18 R=1457 ;; SPAN.chip w=61 L=452 R=513 ;; SPAN.chip w=72 L=525 R=597 ;; SPAN.chip w=65 L=609 R=674 ;; SPAN.chip w=46 L=686 R=732 ;; SPAN.chip w=72 L=744 R=816 ;; SPAN.chip w=73 L=828 R=901 ;; SPAN.chip w=63 L=913 R=976 ;; SPAN.chip w=93 L=988 R=1081 ;; SPAN.chip w=72 L=1093 R=1165 ;; SPAN.chip w=61 L=1177 R=1239 ;; SPAN.chip w=72 L=1251 R=1323 ;; SPAN.chip w=65 L=1335 R=1399 ;; SPAN.chip w=46 L=1411 R=1457</div></body></html>

@@ -1,0 +1,321 @@
+/**
+ * 全站样式：设计变量 + 通用零件 + 动效。
+ *
+ * 单色系：整站只有一个蓝紫强调色，层次靠深浅和留白拉开，不用渐变。
+ * 深浅两套主题都只改这里的变量（`data-theme="dark"` 挂在 <html> 上，
+ * 见 composables/useTheme.js）。页面里只引用变量、不写死颜色。
+ */
+
+:root {
+  /* 底色 / 表面（玻璃拟态：半透明 surface + 背景模糊，见 .card） */
+  --bg: #f7f8fb;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-hover: rgba(255, 255, 255, 0.9);
+  --border: rgba(19, 27, 58, 0.1);
+  --border-strong: rgba(19, 27, 58, 0.18);
+
+  /* 文字三级 */
+  --text-1: #14192b;
+  --text-2: #545c73;
+  --text-3: #8b93a8;
+
+  /* 强调色：就这一个蓝紫，另一个深一档给悬停和压白字用 */
+  --brand: #6b74c2;
+  --brand-strong: #5a64b4;
+  --brand-soft: rgba(107, 116, 194, 0.08);
+
+  /* 圆角 / 阴影 / 版心 */
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 18px;
+  --shadow: 0 10px 28px -18px rgba(19, 27, 58, 0.25);
+  --content-width: 1120px;
+  --header-height: 64px;
+
+  /* 背景光晕：卡片要透出它，玻璃感才成立 */
+  --aurora-color: rgba(107, 116, 194, 0.22);
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #0b0f1c;
+  --surface: rgba(255, 255, 255, 0.055);
+  --surface-hover: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+
+  --text-1: #eef1f9;
+  --text-2: #a4adc4;
+  --text-3: #6f7893;
+
+  --brand: #9099dd;
+  --brand-strong: #7d87d3;
+  --brand-soft: rgba(144, 153, 221, 0.12);
+
+  --shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.6);
+
+  --aurora-color: rgba(144, 153, 221, 0.18);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* 常驻滚动条槽位：长页面（有滚动条）和短页面（没有）之间切 tab 时，
+     视口宽度不会变，顶栏和标题就不会左右抽一下 */
+  scrollbar-gutter: stable;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei',
+    'Helvetica Neue', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* 主题切换时整页过渡一下，别硬闪 */
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--brand-soft);
+}
+
+/* 滚动条：细一点，跟着主题走 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+/* ---------- 版心与栅格 ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 14px;
+}
+
+/* 统一网格：卡片都占整数格，排出来是齐的 */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+/* ---------- 通用零件 ---------- */
+
+/* 玻璃卡片：半透明底 + 背景模糊 + 细描边 */
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card--hover:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  box-shadow: var(--shadow);
+}
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn--primary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--brand-strong);
+}
+
+.btn--ghost {
+  border-color: var(--border-strong);
+  background: var(--surface);
+  color: var(--text-1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.btn--ghost:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* 小标签 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.chip:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* 强调文字：只换颜色，不做渐变 */
+.accent {
+  color: var(--brand);
+}
+
+/* 小标题上方那行「眉标」 */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: var(--border-strong);
+}
+
+/* 正文段落 */
+.muted {
+  color: var(--text-2);
+}
+
+/* ---------- 动效 ---------- */
+
+/* 滚动进场：useReveal 加上 .is-visible（见 composables/useReveal.js） */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 无障碍：系统开了「减少动态效果」就全关掉 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 900px) {
+  .bento {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .bento {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .btn {
+    height: 42px;
+    padding: 0 18px;
+    font-size: 14px;
+  }
+}
