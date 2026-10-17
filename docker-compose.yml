@@ -1,0 +1,81 @@
+# 个人网站的 Docker 部署：Nginx 托管静态文件，并把 /api 反向代理到后端接口
+#
+# 镜像构建上下文直接来自 GitHub，服务器上不需要放源码：
+#   https://github.com/duzqiu/fastapi-personal-website.git
+#
+# 前置条件（不满足会构建 / 启动失败）：
+#   1) 仓库里已存在 Dockerfile / .dockerignore / nginx.conf 并已 push
+#      —— build.context 是远端仓库，构建用的是远端文件；
+#   2) 后端已经在跑（默认走宿主机的 8000 端口）。
+#
+# 用法：
+#   cp .env.docker.example .env      # 按需改端口 / 后端地址 / npm 源
+#   docker compose up -d --build
+#
+# 访问：http://<服务器IP>:8090/                            个人网站
+#      http://<服务器IP>:8090/api/v1/system/health        反代是否打通（应返回后端健康检查结果）
+name: fastapi-personal-website
+
+services:
+  frontend:
+    build:
+      # 直接从 GitHub 拉源码作为构建上下文；要固定版本可写 ...git#v1.0.0 或 ...git#分支名
+      # 本地调试 / 还没 push 时，把这一行改成 context: .
+      context: https://github.com/duzqiu/fastapi-personal-website.git
+      args:
+        # Node 26（2026-10 起进入 LTS）的 Alpine 版，仅用于构建阶段
+        NODE_IMAGE: ${NODE_IMAGE:-node:26-alpine}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org}
+        # nginx 1.30 为 stable 分支
+        NGINX_IMAGE: ${NGINX_IMAGE:-nginx:1.30-alpine}
+        # 相对路径 /api：浏览器只访问本机，由下面的 Nginx 反代到后端 → 无跨域
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
+        VITE_APP_TITLE: ${VITE_APP_TITLE:-}
+        # 只展示后端某一个人的简历；留空 = 取第一个启用中的人
+        VITE_PROFILE_ID: ${VITE_PROFILE_ID:-}
+    image: fastapi-personal-website:1.0.0
+    # 该镜像只在本地构建产生，别去镜像仓库拉
+    pull_policy: build
+    container_name: personal-website
+    restart: unless-stopped
+    # 用 host.docker.internal 作为后端地址时需要（Linux 需这行；Docker Desktop 自带）
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      # 后端接口地址，容器启动时注入 Nginx。两种接法：
+      #   A 默认·零配置：http://host.docker.internal:8000 —— 走宿主机映射端口
+      #   B 共享网络（少一层 NAT）：http://backend:8000 或 http://admin-backend:8000
+      #     需要同时打开本 service 的 networks 注释块 + 文件末尾的 networks 块
+      API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:8000}
+    ports:
+      # 宿主机 8090 → 容器 nginx 80
+      - "${FRONTEND_PORT:-8090}:80"
+    # ⚠️ 不要写 `networks: [xxx]` 去指向 Docker 默认的 bridge 网络：
+    #    Compose 会给容器设置 network-scoped alias（服务名 / 容器名），而 Docker 只允许在
+    #    「用户自定义网络」上使用别名，指向默认 bridge 会直接报
+    #    network-scoped alias is supported only for containers in user defined networks。
+    # 默认不声明 networks：Compose 会自动创建一个用户自定义网络（<项目名>_default），
+    # 别名与容器互访都正常，也不存在「external 网络找不到」的问题。
+    #
+    # 接法 B：想与后端共享网络时，取消下面两行注释（并同步打开文件末尾的 networks 块）
+    # networks:
+    #   - backend-net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# ---------------------------- 接法 B 专用（默认不用）----------------------------
+# 只有「与后端共享网络」时才需要：把它和上面 service 里的 networks 注释块一起取消注释，
+# 并把 .env 的 BACKEND_NETWORK 设成后端 compose 的真实网络名。
+#
+# external: true 表示「该网络必须已存在」，本 compose 不创建它；名字写错会直接报
+#   network xxx declared as external, but could not be found
+#
+# networks:
+#   backend-net:
+#     external: true
+#     name: ${BACKEND_NETWORK:-fastapi-admin_default}
