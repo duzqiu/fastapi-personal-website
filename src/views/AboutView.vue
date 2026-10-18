@@ -1,5 +1,5 @@
 <template>
-  <div class="container about">
+  <div v-if="resolved && online" class="container about">
     <SectionHeading eyebrow="关于" title="关于我" />
 
     <!-- 顶排：左边资料卡，右边简介卡（等高于左侧） -->
@@ -235,18 +235,32 @@
       </div>
     </section>
   </div>
+
+  <!-- 接口没通 / 没有启用中的简历：给一张缺省页，不再拿本地占位数据顶替 -->
+  <div v-else class="container about">
+    <SectionHeading eyebrow="关于" title="关于我" />
+
+    <section v-if="!resolved" class="empty-state card" aria-live="polite">
+      <span class="empty-state__spinner" aria-hidden="true" />
+      <p class="empty-state__title">正在加载</p>
+      <p class="empty-state__desc">正在读取简历数据…</p>
+    </section>
+
+    <EmptyState v-else title="暂无数据" desc="关于我接口暂时不可用，请稍后再试" />
+  </div>
 </template>
 
 <script setup>
 import { computed, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
+import EmptyState from '@/components/EmptyState.vue'
 import ProjectCard from '@/components/ProjectCard.vue'
 import SectionHeading from '@/components/SectionHeading.vue'
 import { useSiteStore } from '@/stores/site'
 
 const site = useSiteStore()
-const { profile, projects } = storeToRefs(site)
+const { profile, projects, resolved, online } = storeToRefs(site)
 
 /** 目前状态代码 -> 配色档位（与后端 ResumeCurrentStatus 对应） */
 const STATUS_TONES = {
@@ -938,6 +952,53 @@ onUnmounted(() => clearTimeout(copyTimer))
   .timeline__period {
     justify-self: start;
     margin-left: 22px;
+  }
+}
+
+/* ---------- 缺省状态 ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 420px;
+  padding: 44px 24px;
+  text-align: center;
+}
+
+.empty-state__title {
+  color: var(--text-1);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.empty-state__desc {
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.empty-state__spinner {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 6px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: empty-spin 0.8s linear infinite;
+}
+
+@keyframes empty-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .empty-state {
+    min-height: 320px;
+    padding: 32px 18px;
   }
 }
 

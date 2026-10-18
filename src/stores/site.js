@@ -277,8 +277,10 @@ export const useSiteStore = defineStore('site', () => {
   const profile = ref({ ...FALLBACK_PROFILE })
   const projects = ref(FALLBACK_PROJECTS.map((item) => ({ ...item })))
   const loading = ref(false)
-  /** 后端通没通：没通也不拦着页面显示，只是用本地占位数据 */
+  /** 后端通没通：首页等页面仍可用本地占位数据兜底；「关于我」页据此展示缺省页 */
   const online = ref(false)
+  /** 第一次请求是否已经结束（成功或失败），用来区分「加载中」和「确实没数据」 */
+  const resolved = ref(false)
 
   /**
    * 资料和项目来自**同一个**接口，组件里两处都会调 load*，
@@ -291,6 +293,7 @@ export const useSiteStore = defineStore('site', () => {
 
     pending = (async () => {
       loading.value = true
+      resolved.value = false
       try {
         // VITE_PROFILE_ID 配了就拿指定的人，没配就取启用中的第一个人
         const personalId = Number(import.meta.env.VITE_PROFILE_ID || 0)
@@ -307,6 +310,7 @@ export const useSiteStore = defineStore('site', () => {
         online.value = false
       } finally {
         loading.value = false
+        resolved.value = true
         pending = null
       }
     })()
@@ -322,5 +326,14 @@ export const useSiteStore = defineStore('site', () => {
     await loadResume()
   }
 
-  return { profile, projects, loading, online, loadProfile, loadProjects, reload: loadResume }
+  return {
+    profile,
+    projects,
+    loading,
+    online,
+    resolved,
+    loadProfile,
+    loadProjects,
+    reload: loadResume,
+  }
 })
