@@ -19,6 +19,8 @@ const FALLBACK_PROFILE = {
   /* 目前状态：代码用于配色，文案直接展示（后端 current_status / current_status_text） */
   status: '在职-考虑机会',
   statusCode: 'employed_open',
+  /* 工作年限：接上后端后按工作经历的起止月份计算，这里只是离线兜底 */
+  workYears: 5,
   gender: '男',
   age: 28,
   location: '上海',
@@ -217,6 +219,8 @@ function normalizeProfile(raw) {
     intro: info.remark || FALLBACK_PROFILE.intro,
     statusCode: info.current_status || FALLBACK_PROFILE.statusCode,
     status: info.current_status_text || FALLBACK_PROFILE.status,
+    // 后台填写的工作年限优先；为 0 时页面会按工作经历自动计算
+    workYears: Number(info.work_years) || 0,
     gender: info.gender_text || FALLBACK_PROFILE.gender,
     age: ageFromBirthday(info.birthday) ?? FALLBACK_PROFILE.age,
     location: info.city || FALLBACK_PROFILE.location,
@@ -231,6 +235,9 @@ function normalizeProfile(raw) {
       })),
     experience: works.map((work) => ({
       period: formatPeriod(work.start_month, work.end_month),
+      // 原始月份留给页面算工作年限（period 是展示文案，不便再解析）
+      start: work.start_month || '',
+      end: work.end_month || '',
       title: work.position || work.department || '',
       org: work.company || '',
       desc: work.description || '',

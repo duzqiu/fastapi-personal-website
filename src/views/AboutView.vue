@@ -10,7 +10,10 @@
           <template v-else>{{ profile.monogram }}</template>
         </div>
 
-        <p class="profile__name">{{ profile.name }}</p>
+        <div class="profile__name-row">
+          <p class="profile__name">{{ profile.name }}</p>
+          <span v-if="profile.age" class="profile__age">{{ profile.age }} 岁</span>
+        </div>
         <p class="profile__tip">{{ profile.title }}</p>
 
         <span
@@ -32,11 +35,11 @@
           </li>
           <li>
             <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" />
-              <path d="M8 3.5v4M16 3.5v4M3.5 10.5h17" />
+              <rect x="3.5" y="7.5" width="17" height="13" rx="2.5" />
+              <path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3.5 12.5h17" />
             </svg>
-            <span class="profile__label">年龄</span>
-            <span class="profile__value">{{ profile.age }}</span>
+            <span class="profile__label">年限</span>
+            <span class="profile__value">{{ workYearsValue }}</span>
           </li>
           <li>
             <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -176,10 +179,10 @@
       </div>
     </section>
 
-    <!-- 工作经历 -->
+    <!-- 经历 -->
     <section v-if="profile.experience?.length" class="section" v-reveal>
       <div class="section__head">
-        <h2 class="block__title">工作经历</h2>
+        <h2 class="block__title">经历</h2>
         <span class="section__count">{{ profile.experience.length }} 段</span>
       </div>
 
@@ -206,10 +209,10 @@
       </div>
     </section>
 
-    <!-- 教育经历：与工作经历共用同一套时间线 -->
+    <!-- 教育：与工作共用同一套时间线 -->
     <section v-if="profile.education?.length" class="section" v-reveal>
       <div class="section__head">
-        <h2 class="block__title">教育经历</h2>
+        <h2 class="block__title">教育</h2>
         <span class="section__count">{{ profile.education.length }} 段</span>
       </div>
 
@@ -255,6 +258,56 @@ const STATUS_TONES = {
 const statusTone = computed(
   () => STATUS_TONES[profile.value.statusCode] || 'default',
 )
+
+/** 「YYYY-MM」转成连续月份序号；空 / 格式不对返回 null */
+const MONTH_PATTERN = /^(\d{4})-(\d{2})$/
+
+function monthIndex(value) {
+  const match = MONTH_PATTERN.exec(String(value || ''))
+  if (!match) return null
+  return Number(match[1]) * 12 + Number(match[2]) - 1
+}
+
+/**
+ * 工作年限：后台填了就直接用；填 0（未设置）才回退到
+ * 「把各段工作经历合并后算总月数（重叠的只算一次）」。
+ * 结束月份为空按「至今」处理，未来的结束时间截到当前月。
+ */
+const workYearsValue = computed(() => {
+  const manual = Number(profile.value.workYears)
+  if (Number.isFinite(manual) && manual > 0) return `${manual} 年`
+
+  const now = new Date()
+  const nowIndex = now.getFullYear() * 12 + now.getMonth()
+
+  const ranges = (profile.value.experience || [])
+    .map((item) => {
+      const start = monthIndex(item.start)
+      if (start === null || start > nowIndex) return null
+      const end = Math.min(monthIndex(item.end) ?? nowIndex, nowIndex)
+      return [start, Math.max(start, end)]
+    })
+    .filter(Boolean)
+    .sort((a, b) => a[0] - b[0])
+
+  if (!ranges.length) return ''
+
+  let total = 0
+  let [rangeStart, rangeEnd] = ranges[0]
+  for (const [start, end] of ranges.slice(1)) {
+    if (start <= rangeEnd + 1) {
+      rangeEnd = Math.max(rangeEnd, end)
+    } else {
+      total += rangeEnd - rangeStart + 1
+      rangeStart = start
+      rangeEnd = end
+    }
+  }
+  total += rangeEnd - rangeStart + 1
+
+  const years = Math.round(total / 12)
+  return years >= 1 ? `${years} 年` : `${Math.max(total, 1)} 个月`
+})
 
 /** 自我评价最多铺两条，多了会把右卡撑得过高 */
 const evaluations = computed(() =>
@@ -398,11 +451,38 @@ onUnmounted(() => clearTimeout(copyTimer))
   object-fit: cover;
 }
 
-.profile__name {
+/* 姓名 + 工作年限：年限贴在名字右下角，用一道细线分隔 */
+.profile__name-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
   margin-top: 20px;
+}
+
+.profile__name {
   font-size: 19px;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.profile__age {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding-bottom: 3px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.profile__age::before {
+  width: 1px;
+  height: 10px;
+  background: var(--border-strong);
+  content: '';
 }
 
 .profile__tip {
