@@ -23,66 +23,84 @@
 
         <ul class="profile__meta">
           <li>
-            <span class="profile__label">
-              <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="8" r="3.4" />
-                <path d="M5.5 19.5a6.5 6.5 0 0 1 13 0" />
-              </svg>
-              性别
-            </span>
+            <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.4" />
+              <path d="M5.5 19.5a6.5 6.5 0 0 1 13 0" />
+            </svg>
+            <span class="profile__label">性别</span>
             <span class="profile__value">{{ profile.gender }}</span>
           </li>
           <li>
-            <span class="profile__label">
-              <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" />
-                <path d="M8 3.5v4M16 3.5v4M3.5 10.5h17" />
-              </svg>
-              年龄
-            </span>
+            <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" />
+              <path d="M8 3.5v4M16 3.5v4M3.5 10.5h17" />
+            </svg>
+            <span class="profile__label">年龄</span>
             <span class="profile__value">{{ profile.age }}</span>
           </li>
           <li>
-            <span class="profile__label">
-              <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 20.5s6-5.6 6-10.3a6 6 0 1 0-12 0c0 4.7 6 10.3 6 10.3Z" />
-                <circle cx="12" cy="10" r="2.3" />
-              </svg>
-              所在地
-            </span>
+            <svg class="profile__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20.5s6-5.6 6-10.3a6 6 0 1 0-12 0c0 4.7 6 10.3 6 10.3Z" />
+              <circle cx="12" cy="10" r="2.3" />
+            </svg>
+            <span class="profile__label">所在地</span>
             <span class="profile__value">{{ profile.location }}</span>
           </li>
         </ul>
 
-        <!-- 联系方式并进资料卡：一列淡色行，点一下就能发信 / 拨号 / 打开主页 -->
+        <!-- 联系方式并进资料卡：只做展示，邮箱额外提供复制 -->
         <ul v-if="profile.email || profile.phone || profile.website" class="profile__contacts">
           <li v-if="profile.email">
-            <a class="profile__contact" :href="`mailto:${profile.email}`">
+            <!-- 邮箱不调起本地邮件客户端，只提供复制 -->
+            <div class="profile__contact">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <rect x="3" y="5.5" width="18" height="13" rx="2.5" />
                 <path d="m4.5 7.5 7.5 5.5 7.5-5.5" />
               </svg>
-              <span :title="profile.email">{{ profile.email }}</span>
-            </a>
+              <span class="profile__contact-text" :title="profile.email">
+                {{ profile.email }}
+              </span>
+              <button
+                class="profile__copy"
+                :class="{ 'is-done': copiedEmail }"
+                type="button"
+                :aria-label="copiedEmail ? '邮箱已复制' : '复制邮箱'"
+                :title="copiedEmail ? '邮箱已复制' : '复制邮箱'"
+                @click="copyEmail"
+              >
+                <svg v-if="!copiedEmail" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="9" y="9" width="11" height="11" rx="2.5" />
+                  <path d="M15 6.5V5.5A1.5 1.5 0 0 0 13.5 4h-8A1.5 1.5 0 0 0 4 5.5v8A1.5 1.5 0 0 0 5.5 15h1" />
+                </svg>
+                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m4.5 12.5 5 5 10-11" />
+                </svg>
+                <span>{{ copiedEmail ? '已复制' : '复制' }}</span>
+              </button>
+            </div>
           </li>
           <li v-if="profile.phone">
-            <a class="profile__contact" :href="telHref">
+            <div class="profile__contact">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="M8.5 3.8 11 8.6l-2.2 2.2a12 12 0 0 0 4.4 4.4l2.2-2.2 4.8 2.5v3.2a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3.5 6a2 2 0 0 1 2-2.2Z"
                 />
               </svg>
-              <span :title="profile.phone">{{ profile.phone }}</span>
-            </a>
+              <span class="profile__contact-text" :title="profile.phone">
+                {{ profile.phone }}
+              </span>
+            </div>
           </li>
           <li v-if="profile.website">
-            <a class="profile__contact" :href="profile.website" target="_blank" rel="noreferrer">
+            <div class="profile__contact">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="8.5" />
                 <path d="M3.5 12h17M12 3.5c2.2 2.3 3.3 5.1 3.3 8.5S14.2 18.2 12 20.5c-2.2-2.3-3.3-5.1-3.3-8.5S9.8 5.8 12 3.5Z" />
               </svg>
-              <span :title="profile.website">{{ websiteLabel }}</span>
-            </a>
+              <span class="profile__contact-text" :title="profile.website">
+                {{ websiteLabel }}
+              </span>
+            </div>
           </li>
         </ul>
       </aside>
@@ -217,7 +235,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import ProjectCard from '@/components/ProjectCard.vue'
@@ -245,17 +263,50 @@ const evaluations = computed(() =>
 
 const skillCount = computed(() => profile.value.skills?.length || 0)
 
-/** 手机号里带空格，tel: 链接得去掉才拨得出去 */
-const telHref = computed(
-  () => `tel:${String(profile.value.phone || '').replace(/\s+/g, '')}`,
-)
-
 /** 主页地址去掉协议头，卡片里只留一行能看懂的域名 */
 const websiteLabel = computed(() =>
   String(profile.value.website || '')
     .replace(/^https?:\/\//, '')
     .replace(/\/$/, ''),
 )
+
+/** 邮箱复制反馈：点一下变成「已复制」，1.6 秒后复原 */
+const copiedEmail = ref(false)
+let copyTimer = null
+
+async function copyEmail() {
+  const text = profile.value.email
+  if (!text) return
+
+  let copied = false
+  try {
+    await navigator.clipboard.writeText(text)
+    copied = true
+  } catch {
+    // 局域网 http 下没有 Clipboard API，退回临时 textarea
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.setAttribute('readonly', '')
+    textarea.style.position = 'fixed'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      copied = document.execCommand('copy')
+    } finally {
+      document.body.removeChild(textarea)
+    }
+  }
+
+  if (!copied) return
+  copiedEmail.value = true
+  clearTimeout(copyTimer)
+  copyTimer = setTimeout(() => {
+    copiedEmail.value = false
+  }, 1600)
+}
+
+onUnmounted(() => clearTimeout(copyTimer))
 </script>
 
 <style scoped>
@@ -434,9 +485,6 @@ const websiteLabel = computed(() =>
 }
 
 .profile__label {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   color: var(--text-3);
   font-size: 10.5px;
   letter-spacing: 0.1em;
@@ -480,15 +528,11 @@ const websiteLabel = computed(() =>
   border-radius: 8px;
   color: var(--text-2);
   font-size: 12.5px;
-  transition: background 0.2s ease, color 0.2s ease;
+  /* 卡片是居中排版，联系方式这一列统一靠左，别让邮箱文字居中 */
+  text-align: left;
 }
 
-.profile__contact:hover {
-  background: var(--brand-soft);
-  color: var(--text-1);
-}
-
-.profile__contact svg {
+.profile__contact > svg {
   flex: none;
   width: 14px;
   height: 14px;
@@ -499,10 +543,51 @@ const websiteLabel = computed(() =>
   stroke-linejoin: round;
 }
 
-.profile__contact span {
+.profile__contact-text {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 邮箱复制按钮：点一下变绿并显示「已复制」 */
+.profile__copy {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-3);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.profile__copy:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.profile__copy.is-done {
+  border-color: color-mix(in srgb, #2f9e6b 30%, transparent);
+  background: color-mix(in srgb, #2f9e6b 9%, transparent);
+  color: #2f7d5c;
+}
+
+.profile__copy svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* ---------- 简介卡 ---------- */
@@ -582,9 +667,10 @@ const websiteLabel = computed(() =>
 
 /* ---------- 技能 ---------- */
 
+/* 单行最多三列，超过三个自动换到下一行 */
 .skill-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -730,6 +816,10 @@ const websiteLabel = computed(() =>
   .timeline {
     grid-column: span 4;
   }
+
+  .skill-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -749,6 +839,10 @@ const websiteLabel = computed(() =>
 
   .intro {
     padding: 24px 20px;
+  }
+
+  .skill-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .timeline {
