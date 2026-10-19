@@ -110,7 +110,7 @@
 
       <article class="intro card" v-reveal="100">
         <div class="card-head">
-          <span class="card-head__label">个人简介</span>
+          <span class="card-head__label">个人优势</span>
           <span class="card-head__rule" />
         </div>
 
