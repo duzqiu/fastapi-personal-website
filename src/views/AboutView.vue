@@ -749,6 +749,8 @@ onUnmounted(() => clearTimeout(copyTimer))
   color: var(--text-2);
   font-size: 13px;
   line-height: 1.8;
+  /* 保留后台输入框里的换行，序号可以逐行展示 */
+  white-space: pre-line;
 }
 
 /* 三项数字压在卡片底部，撑起整张卡的高度 */
@@ -930,6 +932,8 @@ onUnmounted(() => clearTimeout(copyTimer))
   margin-top: 6px;
   font-size: 13.5px;
   line-height: 1.8;
+  /* 工作内容里的换行原样展示 */
+  white-space: pre-line;
 }
 
 /* ---------- 响应式 ---------- */

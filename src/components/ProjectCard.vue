@@ -269,6 +269,8 @@ onUnmounted(() => observer?.disconnect())
   color: var(--text-3);
   font-size: 12.5px;
   line-height: 1.75;
+  /* 项目描述 / 职责 / 业绩都保留后台输入的换行 */
+  white-space: pre-line;
 }
 
 /* 右下角那个展开/收起箭头 */
