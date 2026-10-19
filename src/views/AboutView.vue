@@ -114,7 +114,7 @@
           <span class="card-head__rule" />
         </div>
 
-        <!-- 自我评价：后端给的评价逐条铺开，最多两条，避免把卡片撑太长 -->
+        <!-- 自我评价：后端按序号返回全部，超出卡片高度时在卡片内滚动 -->
         <div v-if="evaluations.length" class="intro__evals">
           <div v-for="(item, i) in evaluations" :key="`${item.title}-${i}`" class="intro__eval">
             <p class="intro__eval-title">{{ item.title }}</p>
@@ -323,9 +323,9 @@ const workYearsValue = computed(() => {
   return years >= 1 ? `${years} 年` : `${Math.max(total, 1)} 个月`
 })
 
-/** 自我评价最多铺两条，多了会把右卡撑得过高 */
+/** 自我评价全部展示，顺序沿用后端按 sort 排好的数组 */
 const evaluations = computed(() =>
-  (profile.value.evaluations || []).filter((item) => item.content).slice(0, 2),
+  (profile.value.evaluations || []).filter((item) => item.content),
 )
 
 const skillCount = computed(() => profile.value.skills?.length || 0)
@@ -378,6 +378,8 @@ onUnmounted(() => clearTimeout(copyTimer))
 
 <style scoped>
 .about {
+  --about-hero-height: 520px;
+
   display: flex;
   flex-direction: column;
   gap: 48px;
@@ -437,7 +439,10 @@ onUnmounted(() => clearTimeout(copyTimer))
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   grid-column: span 2;
+  height: var(--about-hero-height);
+  overflow: hidden;
   padding: 32px 22px 26px;
   text-align: center;
 }
@@ -690,14 +695,38 @@ onUnmounted(() => clearTimeout(copyTimer))
   display: flex;
   flex-direction: column;
   grid-column: span 4;
+  height: var(--about-hero-height);
+  min-height: 0;
+  overflow: hidden;
   padding: 30px 32px;
 }
 
+/* 评价多了在卡片内部滚动，底部统计始终留在卡片底边 */
 .intro__evals {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 12px;
+  min-height: 0;
   margin-top: 18px;
+  padding-right: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.intro__evals::-webkit-scrollbar {
+  width: 4px;
+}
+
+.intro__evals::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--border-strong);
+}
+
+.intro__evals::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* 评价用小色块包起来：浅品牌底 + 左侧一道细线 */
@@ -725,6 +754,7 @@ onUnmounted(() => clearTimeout(copyTimer))
 /* 三项数字压在卡片底部，撑起整张卡的高度 */
 .intro__stats {
   display: grid;
+  flex: none;
   grid-template-columns: repeat(3, 1fr);
   margin-top: auto;
   padding-top: 20px;
