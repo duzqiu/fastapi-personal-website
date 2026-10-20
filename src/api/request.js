@@ -15,9 +15,12 @@ const request = axios.create({
 request.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const detail = error?.response?.data?.detail
+    const payload = error?.response?.data
+    const detail = payload?.detail
     const message =
       (typeof detail === 'string' && detail) ||
+      // 后端业务异常统一是 { code, message, data }
+      (typeof payload?.message === 'string' && payload.message) ||
       error?.message ||
       '网络异常，请稍后再试'
     return Promise.reject(new Error(message))

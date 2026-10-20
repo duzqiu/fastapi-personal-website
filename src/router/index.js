@@ -45,6 +45,17 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0, behavior: 'instant' }),
 })
 
+// 「关于我」需要先通过密码：直接访问时送回首页并自动弹出密码框
+router.beforeEach((to) => {
+  if (
+    to.name === 'about' &&
+    sessionStorage.getItem('about-unlocked') !== '1'
+  ) {
+    return { name: 'home', query: { gate: 'about' } }
+  }
+  return true
+})
+
 router.afterEach((to) => {
   document.title = to.meta.title ? `${to.meta.title} · ${APP_TITLE}` : APP_TITLE
 })

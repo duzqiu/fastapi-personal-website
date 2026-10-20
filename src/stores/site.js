@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { fetchResumeProfiles } from '@/api/profile'
+import { fetchSiteWelcome } from '@/api/site'
 
 /**
  * 后端没接上时用这份占位数据，想先看效果改这里就行。
@@ -107,6 +108,12 @@ const FALLBACK_PROFILE = {
       note: '主修偏后端和数据库。毕业设计做的是一个校园二手交易平台，接口、页面、部署都是自己走完的。',
     },
   ],
+}
+
+const FALLBACK_WELCOME = {
+  title: '测试工程师（AI + Python）',
+  subtitle: '功能测试 · 自动化测试 · 接口测试 · 性能测试 · AI 辅助测试',
+  blessing: '愿你今天也有好心情。',
 }
 
 const FALLBACK_PROJECTS = [
@@ -275,6 +282,7 @@ function normalizeProjects(raw) {
 
 export const useSiteStore = defineStore('site', () => {
   const profile = ref({ ...FALLBACK_PROFILE })
+  const welcome = ref({ ...FALLBACK_WELCOME })
   const projects = ref(FALLBACK_PROJECTS.map((item) => ({ ...item })))
   const loading = ref(false)
   /** 后端通没通：首页等页面仍可用本地占位数据兜底；「关于我」页据此展示缺省页 */
@@ -318,6 +326,20 @@ export const useSiteStore = defineStore('site', () => {
     return pending
   }
 
+  async function loadWelcome() {
+    try {
+      const data = await fetchSiteWelcome()
+      welcome.value = {
+        title: data?.title || FALLBACK_WELCOME.title,
+        subtitle: data?.subtitle || FALLBACK_WELCOME.subtitle,
+        blessing: data?.blessing || '',
+      }
+    } catch {
+      // 接口没通时保留本地占位，首页不至于空掉
+      welcome.value = { ...FALLBACK_WELCOME }
+    }
+  }
+
   async function loadProfile() {
     await loadResume()
   }
@@ -328,10 +350,12 @@ export const useSiteStore = defineStore('site', () => {
 
   return {
     profile,
+    welcome,
     projects,
     loading,
     online,
     resolved,
+    loadWelcome,
     loadProfile,
     loadProjects,
     reload: loadResume,

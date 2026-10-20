@@ -1,7 +1,7 @@
 import request from './request'
 
 /**
- * 个人简历的对外接口（由 fastapi-admin-backend 提供，**无需登录**）。
+ * 个人网站 · 简历信息的对外接口（由 fastapi-admin-backend 提供，**无需登录**）。
  *
  * 后端把「一个人的整份简历」合并成一个接口，挂载在 `/api/v1` 下：
  *

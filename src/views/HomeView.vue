@@ -5,9 +5,9 @@
     <span class="hero__halo hero__halo--core" aria-hidden="true" />
 
     <div class="hero__inner">
-      <!-- 主标题固定，不跟后端的「求职意向」走 -->
-      <h1 class="hero__title">测试工程师（AI + Python）</h1>
-      <p class="hero__subtitle">{{ profile.subtitle }}</p>
+      <!-- 主标题 / 副标题来自后台「首页欢迎语」 -->
+      <h1 class="hero__title">{{ welcome.title }}</h1>
+      <p class="hero__subtitle">{{ welcome.subtitle }}</p>
       <span class="hero__rule" aria-hidden="true" />
     </div>
   </section>
@@ -19,7 +19,7 @@ import { storeToRefs } from 'pinia'
 import { useSiteStore } from '@/stores/site'
 
 const site = useSiteStore()
-const { profile } = storeToRefs(site)
+const { welcome } = storeToRefs(site)
 </script>
 
 <style scoped>
@@ -78,14 +78,13 @@ const { profile } = storeToRefs(site)
   max-width: min(100%, 980px);
   margin: 0;
   color: var(--text-1);
-  /* 一行放下整句：字号跟着视口走，最宽处约 888px（上限 980px），
-     从 320 到 1440 都不会折行，所以直接锁死单行 */
+  /* 字号跟着视口走；标题可在后台修改，过长时允许自然换行 */
   font-size: clamp(22px, 7.2vw, 70px);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
   /*
    * 淡入和位移拆成两条动画：位移要「快而入位」，所以用前段就冲到底的缓动；
    * 透明度要是也用这条曲线，0.2 秒就到 80% 了，眼睛基本看不出在渐显。
@@ -119,6 +118,7 @@ const { profile } = storeToRefs(site)
   font-weight: 500;
   letter-spacing: 0.04em;
   text-align: center;
+  white-space: pre-line;
   animation:
     hero-fade 1.15s 0.28s ease-out both,
     hero-rise 0.9s 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -189,9 +189,8 @@ const { profile } = storeToRefs(site)
     padding: 20px 16px;
   }
 
-  /* 手机上标题不再锁单行：锁死会顶出容器宽度，连带把下面那行副标题裁掉 */
+  /* 手机上标题字号再收一档 */
   .hero__title {
-    white-space: normal;
     font-size: clamp(20px, 8vw, 34px);
   }
 
