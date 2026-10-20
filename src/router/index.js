@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import {
+  aboutPasswordEnabled,
+  loadAboutAccess,
+} from '@/utils/aboutAccess'
 import HomeView from '@/views/HomeView.vue'
 
 /** 站点名：浏览器标题用它（可用 .env 里的 VITE_APP_TITLE 覆盖） */
@@ -45,15 +49,15 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0, behavior: 'instant' }),
 })
 
-// 「关于我」需要先通过密码：直接访问时送回首页并自动弹出密码框
-router.beforeEach((to) => {
-  if (
-    to.name === 'about' &&
-    sessionStorage.getItem('about-unlocked') !== '1'
-  ) {
-    return { name: 'home', query: { gate: 'about' } }
-  }
-  return true
+// 「关于我」需要先通过密码：直接访问时送回首页并自动弹出密码框。
+// 后台关闭密码后，这里查询到 password_enabled=false 就直接放行。
+router.beforeEach(async (to) => {
+  if (to.name !== 'about') return true
+
+  await loadAboutAccess()
+  if (!aboutPasswordEnabled.value) return true
+  if (sessionStorage.getItem('about-unlocked') === '1') return true
+  return { name: 'home', query: { gate: 'about' } }
 })
 
 router.afterEach((to) => {

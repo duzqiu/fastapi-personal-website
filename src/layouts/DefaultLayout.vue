@@ -136,6 +136,10 @@ import AuroraBackground from '@/components/AuroraBackground.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import { BRAND_NAME } from '@/router'
 import { useSiteStore } from '@/stores/site'
+import {
+  aboutPasswordEnabled,
+  loadAboutAccess,
+} from '@/utils/aboutAccess'
 
 const ABOUT_UNLOCK_KEY = 'about-unlocked'
 
@@ -171,8 +175,12 @@ function onScroll() {
   progress.value = max > 0 ? Math.min(1, window.scrollY / max) : 0
 }
 
-function openAboutGate() {
-  if (sessionStorage.getItem(ABOUT_UNLOCK_KEY) === '1') {
+async function openAboutGate() {
+  await loadAboutAccess()
+  if (
+    !aboutPasswordEnabled.value ||
+    sessionStorage.getItem(ABOUT_UNLOCK_KEY) === '1'
+  ) {
     router.push({ name: 'about' })
     return
   }
